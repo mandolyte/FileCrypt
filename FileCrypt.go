@@ -68,8 +68,10 @@ func dezip(srcfile string, key []byte, dstfile string) {
 
 	var r io.Reader
 	r = &cipher.StreamReader{S: cipher.NewOFB(c, iv), R: f}
-	if r, err = gzip.NewReader(r); err != nil {
-		log.Fatal("NewReader() Error:" + err.Error())
+
+	r2, err := gzip.NewReader(r)
+	if err != nil {
+		log.Fatal("gzip.NewReader() Error:" + err.Error())
 	}
 
 	var w *os.File
@@ -77,7 +79,7 @@ func dezip(srcfile string, key []byte, dstfile string) {
 		log.Fatal("os.Create() Error:" + err.Error())
 	}
 
-	_, err = io.Copy(w, r)
+	_, err = io.Copy(w, r2)
 	if err != nil {
 		log.Fatal("io.Copy() error:" + err.Error())
 	}
